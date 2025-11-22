@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Mohd Ahtasham Ansari | Developer Portfolio</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍥</text></svg>">
+
+    <meta property="og:title" content="Mohd Ahtasham Ansari | Java Backend Developer">
+    <meta property="og:description" content="Gamified Developer Portfolio tracking progress in Java, Spring Boot, and AI Agents.">
+    <meta property="og:image" content="https://ui-avatars.com/api/?name=Ahtasham+Ansari&background=ff5e00&color=fff&size=512">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root {
+            /* DEFAULT (Light/Warm Theme) */
+            --bg-body: #fdfbf7;
+            --bg-dot: #e6e1d6;
+            --bg-card: #ffffff;
+            --bg-input: #fff8f2;
+            
+            --naruto-orange: #ff5e00;
+            --leaf-green: #00b341;
+            --chakra-blue: #00d2ff;
+            --wood-dark: #5c4033; 
+            
+            --text-dark: #2d3436; 
+            --text-light: #636e72; 
+            
+            --border-color: #f0e6d2;
+            --border-hover: #e6dccf;
+            
+            /* Calendar Colors */
+            --cal-L0: #ebedf0; --cal-L1: #bbf7d0; --cal-L2: #4ade80; --cal-L3: #22c55e; --cal-L4: #14532d;
+            
+            --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* DARK MODE */
+        [data-theme="dark"] {
+            --bg-body: #0f1115;
+            --bg-dot: #21262d;
+            --bg-card: #161b22;
+            --bg-input: #0d1117;
+            
+            --wood-dark: #f0f6fc;
+            --text-dark: #c9d1d9;
+            --text-light: #8b949e;
+            
+            --border-color: #30363d;
+            --border-hover: #8b949e;
+
+            --cal-L0: #161b22; --cal-L1: #0e4429; --cal-L2: #006d32; --cal-L3: #26a641; --cal-L4: #39d353;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; transition: background-color 0.3s, color 0.3s, border-color 0.3s; }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); }
+        ::-webkit-scrollbar-thumb { background: #d4c5b2; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--naruto-orange); }
+
+        body {
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(var(--bg-dot) 1.5px, transparent 1.5px), 
+                radial-gradient(var(--bg-dot) 1.5px, var(--bg-body) 1.5px);
+            background-size: 20px 20px;
+            color: var(--text-dark);
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh; display: flex; justify-content: center; padding: 40px 20px;
+            overflow-y: scroll;
+        }
+
+        .dashboard-container {
+            width: 100%; max-width: 1250px;
+            display: grid; grid-template-columns: 340px 1fr; gap: 30px;
+        }
+        @media (max-width: 950px) { .dashboard-container { grid-template-columns: 1fr; } }
+
+        /* --- ANIMATIONS --- */
+        @keyframes entryPop { 0% { opacity: 0; transform: scale(0.9) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes spinSlow { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes floatUp { 0% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-40px) scale(1.2); } }
+        @keyframes toastSlide { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* --- SIDEBAR --- */
+        .panel { 
+            background: var(--bg-card); border-radius: 24px; padding: 25px; 
+            box-shadow: 0 10px 40px -10px rgba(0,0,0, 0.1);
+            border: 2px solid var(--border-color); 
+            transition: transform 0.2s ease, background-color 0.3s, border-color 0.3s;
+        }
+        .panel:hover { transform: translateY(-2px); }
+
+        .sidebar { position: sticky; top: 20px; height: fit-content; display: flex; flex-direction: column; gap: 20px; animation: entryPop 0.6s var(--ease-bounce); }
+        
+        /* THEME BUTTON */
+        .theme-wrapper { display: flex; justify-content: flex-end; margin-bottom: -10px; }
+        .theme-btn {
+            background: var(--bg-input); border: 2px solid var(--border-color); color: var(--wood-dark);
+            width: 35px; height: 35px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: 0.3s; font-size: 1rem;
+        }
+        .theme-btn:hover { border-color: var(--naruto-orange); color: var(--naruto-orange); transform: rotate(20deg); }
+
+        /* ALPHABET AVATAR */
+        .avatar-wrapper { position: relative; width: 150px; height: 150px; margin: 0 auto; display: flex; align-items: center; justify-content: center; }
+        .avatar-ring { position: absolute; width: 100%; height: 100%; border-radius: 50%; border: 3px dashed var(--text-light); animation: spinSlow 15s linear infinite; opacity: 0.3; }
+        .avatar-text {
+            width: 130px; height: 130px; border-radius: 50%; background: var(--bg-card);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 5rem; font-weight: 900; color: var(--naruto-orange);
+            border: 6px solid var(--naruto-orange);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            z-index: 2; transition: 0.3s;
+        }
+        .rank-pill { position: absolute; bottom: 0; z-index: 3; background: linear-gradient(45deg, var(--naruto-orange), #ff2a00); color: #fff; padding: 5px 15px; border-radius: 20px; font-weight: 900; font-size: 0.8rem; border: 3px solid var(--bg-card); }
+
+        .hero-text h2 { text-align: center; font-weight: 900; color: var(--wood-dark); font-size: 1.5rem; line-height: 1.2; margin-bottom: 5px; }
+        .hero-text p { text-align: center; color: var(--text-light); font-weight: 700; font-size: 0.85rem; }
+
+        .stats-container { display: flex; gap: 10px; }
+        .stat-box { flex: 1; background: var(--bg-input); border: 2px solid var(--border-color); border-radius: 16px; padding: 10px; text-align: center; transition: 0.3s; }
+        .stat-box:hover { transform: scale(1.05); border-color: var(--leaf-green); }
+        .stat-val { font-size: 1.5rem; font-weight: 900; color: var(--leaf-green); line-height: 1; }
+        .stat-label { font-size: 0.6rem; font-weight: 800; color: var(--text-light); text-transform: uppercase; margin-top: 5px; }
+
+        .xp-section h4 { font-size: 0.8rem; color: var(--text-light); margin-bottom: 5px; display: flex; justify-content: space-between; }
+        .xp-track { width: 100%; height: 12px; background: var(--bg-input); border-radius: 20px; overflow: hidden; }
+        .xp-bar { height: 100%; width: 0%; border-radius: 20px; background: linear-gradient(90deg, var(--leaf-green), #00ff55); transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1); }
+
+        .badges-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 10px; }
+        .badge { width: 100%; aspect-ratio: 1; background: var(--bg-input); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; color: var(--text-light); transition: 0.3s; border: 2px solid transparent; opacity: 0.5; }
+        .badge.unlocked { background: var(--bg-card); color: var(--naruto-orange); border-color: var(--naruto-orange); opacity: 1; transform: scale(1.1); box-shadow: 0 4px 10px rgba(255, 94, 0, 0.15); }
+
+        .backup-controls { display: flex; gap: 10px; margin-top: 20px; border-top: 2px dashed var(--border-color); padding-top: 20px; }
+        .backup-btn { flex: 1; background: var(--bg-card); border: 2px solid var(--border-color); padding: 8px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; cursor: pointer; color: var(--text-light); transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        .backup-btn:hover { border-color: var(--chakra-blue); color: var(--chakra-blue); }
+
+        /* --- MAIN CONTENT --- */
+        .main-content { animation: entryPop 0.8s var(--ease-bounce) 0.1s both; }
+
+        .tabs { display: flex; gap: 15px; margin-bottom: 30px; border-bottom: 3px solid var(--border-color); padding-bottom: 5px; overflow-x: auto; }
+        .tab-btn { background: none; border: none; font-size: 1.1rem; font-weight: 800; color: var(--text-light); cursor: pointer; padding: 10px 15px; position: relative; transition: 0.3s; white-space: nowrap; }
+        .tab-btn.active { color: var(--naruto-orange); }
+        .tab-btn::after { content: ''; position: absolute; bottom: -8px; left: 50%; width: 0; height: 4px; background: var(--naruto-orange); border-radius: 10px; transition: 0.3s var(--ease-bounce); transform: translateX(-50%); }
+        .tab-btn.active::after { width: 100%; }
+
+        .gates { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px; }
+        .gate { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 18px; padding: 20px; text-decoration: none; display: flex; align-items: center; gap: 15px; transition: 0.3s var(--ease-bounce); }
+        .gate:hover { border-color: var(--naruto-orange); transform: translateY(-5px) scale(1.02); box-shadow: 0 15px 30px rgba(255, 94, 0, 0.15); }
+        .gate-icon { font-size: 2.2rem; }
+        .gate h3 { color: var(--text-dark); font-weight: 800; font-size: 1rem; }
+        .gate p { color: var(--text-light); font-size: 0.8rem; font-weight: 700; }
+
+        .input-area { background: var(--bg-input); border: 2px solid var(--border-color); padding: 10px; border-radius: 18px; display: flex; gap: 10px; margin-bottom: 20px; }
+        .fancy-select, .fancy-input { border: none; background: var(--bg-card); padding: 15px; border-radius: 12px; font-family: 'Nunito'; font-weight: 700; color: var(--text-dark); box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.3s; }
+        .fancy-input { flex-grow: 1; }
+        .fancy-input:focus { box-shadow: 0 0 0 3px rgba(255, 94, 0, 0.2); }
+        .fancy-btn { background: var(--naruto-orange); color: #fff; border: none; padding: 0 30px; border-radius: 12px; font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #cc4b00; transition: 0.2s; }
+        .fancy-btn:active { transform: translateY(4px); box-shadow: 0 1px 0 #cc4b00; }
+
+        .task-list { margin-top: 30px; position: relative; }
+        .task { background: var(--bg-card); border-radius: 16px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.03); border: 1px solid var(--border-color); animation: slideIn 0.5s ease forwards; }
+        .task:hover { transform: translateX(10px); border-color: var(--leaf-green); }
+        .pill { padding: 6px 15px; border-radius: 30px; font-size: 0.7rem; font-weight: 900; letter-spacing: 0.5px; }
+        .pill.DSA { background: rgba(255, 0, 0, 0.1); color: #ff0000; }
+        .pill.JAVA { background: rgba(255, 165, 0, 0.1); color: #ff9900; }
+        .pill.SPRING { background: rgba(0, 170, 255, 0.1); color: #00aaff; }
+        .pill.PYTHON { background: rgba(75, 139, 59, 0.1); color: #4b8b3b; }
+        .check-btn { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--border-color); background: var(--bg-card); color: var(--text-light); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .check-btn:hover { border-color: var(--leaf-green); color: var(--leaf-green); background: rgba(0, 255, 85, 0.1); transform: rotate(360deg); }
+
+        .empty-state { text-align: center; padding: 40px; color: var(--text-light); font-style: italic; }
+        .floating-xp { position: fixed; color: var(--leaf-green); font-weight: 900; font-size: 1.2rem; pointer-events: none; animation: floatUp 1s ease-out forwards; z-index: 1000; }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--bg-card); color: var(--text-dark); padding: 12px 20px; border-radius: 10px; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 10px; animation: toastSlide 0.3s ease-out; box-shadow: 0 10px 30px rgba(0,0,0,0.15); border: 1px solid var(--border-color); }
+        .toast.success { border-left: 4px solid var(--leaf-green); }
+
+        /* ARCHIVES */
+        .cal-wrapper { background: var(--bg-card); padding: 20px; border-radius: 20px; border: 2px solid var(--border-color); overflow-x: auto; margin-bottom: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.02); }
+        .cal-months { display: flex; margin-left: 35px; margin-bottom: 5px; font-size: 0.75rem; color: var(--text-light); font-weight: 700; }
+        .cal-month-label { width: 46px; }
+        .cal-body { display: flex; }
+        .cal-days { display: flex; flex-direction: column; gap: 4px; margin-right: 5px; font-size: 0.7rem; color: var(--text-light); font-weight: 700; padding-top: 3px; }
+        .cal-day-label { height: 12px; line-height: 12px; }
+        .cal-grid { display: grid; grid-template-rows: repeat(7, 12px); grid-auto-flow: column; gap: 4px; width: max-content; }
+        .day-cell { width: 12px; height: 12px; border-radius: 3px; background-color: var(--cal-L0); transition: transform 0.1s; }
+        .day-cell:hover { transform: scale(1.5); border: 1px solid #888; z-index: 2; }
+        .day-cell.l1 { background-color: var(--cal-L1); } .day-cell.l2 { background-color: var(--cal-L2); } .day-cell.l3 { background-color: var(--cal-L3); } .day-cell.l4 { background-color: var(--cal-L4); }
+
+        .chart-box { background: var(--bg-card); border-radius: 20px; padding: 25px; border: 2px solid var(--border-color); margin-bottom: 20px; }
+        .log-box { background: var(--bg-input); border: 2px dashed var(--border-color); border-radius: 16px; padding: 20px; max-height: 300px; overflow-y: auto; }
+        .log-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid var(--border-color); color: var(--text-light); font-size: 0.9rem; }
+
+        /* PORTFOLIO */
+        .portfolio-hero { text-align: center; padding: 40px; background: linear-gradient(135deg, var(--bg-input), var(--bg-card)); border-radius: 20px; border: 2px solid var(--border-color); margin-bottom: 30px; }
+        .pf-name { font-size: 2.2rem; font-weight: 900; color: var(--wood-dark); margin-bottom: 10px; }
+        .pf-role { font-size: 1.1rem; color: var(--text-light); font-weight: 700; margin-bottom: 20px; }
+        .pf-socials { display: flex; justify-content: center; gap: 20px; }
+        .pf-social-btn { color: var(--text-dark); font-size: 1.8rem; transition: 0.3s; }
+        .pf-social-btn:hover { color: var(--naruto-orange); transform: scale(1.2); }
+
+        .live-stats { display: flex; justify-content: space-around; align-items: center; background: #1e1e1e; color: #fff; padding: 30px; border-radius: 20px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); position: relative; overflow: hidden; }
+        .live-stats::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255, 94, 0, 0.1), transparent); animation: spinSlow 20s linear infinite; }
+        .ls-item { text-align: center; z-index: 1; }
+        .ls-val { font-size: 2.5rem; font-weight: 900; color: var(--chakra-blue); display: block; }
+        .ls-lbl { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.7; }
+
+        .section-title { font-size: 1.3rem; font-weight: 900; color: var(--wood-dark); margin-bottom: 15px; border-left: 5px solid var(--naruto-orange); padding-left: 15px; margin-top: 30px; }
+        .skill-grid { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 30px; }
+        .skill-pill { background: var(--bg-card); border: 1px solid var(--border-color); padding: 12px 20px; border-radius: 12px; font-weight: 700; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); color: var(--text-dark); transition: 0.2s; font-size: 0.95rem; }
+        .skill-pill:hover { transform: translateY(-3px); border-color: var(--naruto-orange); }
+        .skill-pill i { color: var(--naruto-orange); font-size: 1.2rem; }
+        
+        /* FIXED CHART CONTAINER */
+        .skill-radar-box { 
+            width: 100%; max-width: 400px; height: 400px; 
+            margin: 0 auto 30px auto; position: relative; 
+        }
+
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px; }
+        .project-card { background: var(--bg-card); border: 2px solid var(--border-color); border-radius: 20px; overflow: hidden; transition: 0.3s; }
+        .project-card:hover { border-color: var(--leaf-green); transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
+        .p-body { padding: 20px; }
+        .p-title { font-size: 1.1rem; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
+        .p-desc { color: var(--text-light); font-size: 0.9rem; line-height: 1.5; margin-bottom: 12px; }
+        .p-tags span { font-size: 0.7rem; background: var(--bg-input); padding: 4px 8px; border-radius: 5px; color: var(--text-light); font-weight: 700; margin-right: 5px; }
+
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <div class="dashboard-container">
+        
+        <div class="panel sidebar">
+            <div class="theme-wrapper">
+                <button class="theme-btn" onclick="toggleTheme()" title="Toggle Theme"><i id="theme-icon" class="fas fa-sun"></i></button>
+            </div>
+
+            <div class="avatar-wrapper">
+                <div class="avatar-ring"></div>
+                <div class="avatar-text" id="avatar-text">E</div>
+                <div class="rank-pill" id="rank-name">E-Rank</div>
+            </div>
+            
+            <div class="hero-text">
+                <h2>MOHD AHTASHAM ANSARI</h2>
+                <p>Java Backend & AI Ninja</p>
+            </div>
+
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-val" id="streak">0</div>
+                    <div class="stat-label">Days Streak</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-val" id="total-done">0</div>
+                    <div class="stat-label">Missions</div>
+                </div>
+            </div>
+
+            <div class="xp-section">
+                <h4><span>Chakra Level</span> <span style="color:var(--leaf-green); font-weight:900;"><span id="curr-xp">0</span> / <span id="max-xp">18000</span></span></h4>
+                <div class="xp-track"><div class="xp-bar" id="xp-fill"></div></div>
+            </div>
+
+            <div class="badges-grid">
+                <div class="badge" id="badge-streak" title="7 Day Streak"><i class="fas fa-fire"></i></div>
+                <div class="badge" id="badge-dsa" title="DSA Apprentice"><i class="fas fa-code"></i></div>
+                <div class="badge" id="badge-java" title="Java Warrior"><i class="fab fa-java"></i></div>
+                <div class="badge" id="badge-hokage" title="Hokage Level"><i class="fas fa-crown"></i></div>
+            </div>
+
+            <div class="backup-controls">
+                <button class="backup-btn" onclick="copyData()"><i class="fas fa-copy"></i> Copy</button>
+                <button class="backup-btn" onclick="pasteData()"><i class="fas fa-paste"></i> Paste</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('missions', this)">Active Missions</button>
+                <button class="tab-btn" onclick="switchTab('archives', this)">Ninja Archives</button>
+                <button class="tab-btn" onclick="switchTab('portfolio', this)">My Portfolio</button>
+            </div>
+
+            <div id="tab-missions">
+                <div class="gates">
+                    <a href="https://takeuforward.org/strivers-a2z-dsa-course/strivers-a2z-dsa-course-sheet-2/" target="_blank" class="gate">
+                        <div class="gate-icon">⚔️</div>
+                        <div><h3>DSA Scrolls</h3><p>Striver A2Z</p></div>
+                    </a>
+                    <a href="https://www.youtube.com/playlist?list=PL9gnSGHSqcnr_DxHsP7AW9ftq0AtAyYqJ" target="_blank" class="gate">
+                        <div class="gate-icon">☕</div>
+                        <div><h3>Java Jutsu</h3><p>Kunal Kushwaha</p></div>
+                    </a>
+                    <a href="https://www.youtube.com/@EngineeringDigest/playlists" target="_blank" class="gate">
+                        <div class="gate-icon">⚙️</div>
+                        <div><h3>Spring Gear</h3><p>Spring Boot</p></div>
+                    </a>
+                </div>
+
+                <div class="input-area">
+                    <select id="new-type" class="fancy-select">
+                        <option value="DSA">DSA (30 XP)</option>
+                        <option value="JAVA">JAVA (60 XP)</option>
+                        <option value="SPRING">SPRING (100 XP)</option>
+                        <option value="PYTHON">PYTHON (40 XP)</option>
+                    </select>
+                    <input type="text" id="new-title" class="fancy-input" placeholder="Enter mission objective...">
+                    <button onclick="addTask()" class="fancy-btn">ADD</button>
+                </div>
+
+                <div id="quest-list" class="task-list"></div>
+            </div>
+
+            <div id="tab-archives" class="hidden archive-section">
+                <h3 style="color:var(--wood-dark); margin-bottom:15px;">Consistency Heatmap</h3>
+                <div class="cal-wrapper">
+                    <div class="cal-months">
+                        <div class="cal-month-label">Jan</div><div class="cal-month-label">Feb</div><div class="cal-month-label">Mar</div>
+                        <div class="cal-month-label">Apr</div><div class="cal-month-label">May</div><div class="cal-month-label">Jun</div>
+                        <div class="cal-month-label">Jul</div><div class="cal-month-label">Aug</div><div class="cal-month-label">Sep</div>
+                        <div class="cal-month-label">Oct</div><div class="cal-month-label">Nov</div><div class="cal-month-label">Dec</div>
+                    </div>
+                    <div class="cal-body">
+                        <div class="cal-days">
+                            <div class="cal-day-label"></div><div class="cal-day-label">Mon</div><div class="cal-day-label"></div>
+                            <div class="cal-day-label">Wed</div><div class="cal-day-label"></div><div class="cal-day-label">Fri</div><div class="cal-day-label"></div>
+                        </div>
+                        <div class="cal-grid" id="github-grid"></div>
+                    </div>
+                </div>
+
+                <h3 style="color:var(--wood-dark); margin:30px 0 15px 0;">Chakra Growth</h3>
+                <div class="chart-box">
+                    <canvas id="xpChart" height="250"></canvas>
+                </div>
+
+                <h3 style="color:var(--wood-dark); margin:30px 0 15px 0;">Mission Scroll</h3>
+                <div class="log-box">
+                    <div id="mission-log"></div>
+                </div>
+            </div>
+
+            <div id="tab-portfolio" class="hidden">
+                
+                <div class="portfolio-hero">
+                    <h1 class="pf-name">MOHD AHTASHAM ANSARI</h1>
+                    <div class="pf-role">Java Backend Developer & AI Enthusiast</div>
+                    <div class="pf-socials">
+                        <a href="https://www.linkedin.com/in/mohd-ahtasham-ansari-ab5533363/" target="_blank" class="pf-social-btn"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://github.com/mohd-ahtasham-ansari" target="_blank" class="pf-social-btn"><i class="fab fa-github"></i></a>
+                        <a href="mailto:aahtasham102@gmail.com" class="pf-social-btn"><i class="fas fa-envelope"></i></a>
+                    </div>
+                    <p style="margin-top:20px; color:var(--text-light); line-height:1.6;">
+                        Passionate B.Tech student specializing in <strong>Java Backend Development</strong> and <strong>Machine Learning</strong>. 
+                        Building scalable systems and exploring the potential of AI Agents.
+                    </p>
+                </div>
+
+                <div class="live-stats">
+                    <div class="ls-item">
+                        <span class="ls-val" id="pf-rank">E</span>
+                        <span class="ls-lbl">Current Rank</span>
+                    </div>
+                    <div class="ls-item">
+                        <span class="ls-val" id="pf-xp">0</span>
+                        <span class="ls-lbl">Total XP Earned</span>
+                    </div>
+                    <div class="ls-item">
+                        <span class="ls-val" id="pf-streak">0</span>
+                        <span class="ls-lbl">Day Streak</span>
+                    </div>
+                </div>
+
+                <div class="section-title">Technical Arsenal</div>
+                <div class="skill-grid">
+                    <div class="skill-pill"><i class="fab fa-java"></i> Java Core</div>
+                    <div class="skill-pill"><i class="fas fa-leaf"></i> Spring Boot</div>
+                    <div class="skill-pill"><i class="fab fa-python"></i> Python</div>
+                    <div class="skill-pill"><i class="fas fa-brain"></i> Machine Learning</div>
+                    <div class="skill-pill"><i class="fas fa-code"></i> DSA</div>
+                    <div class="skill-pill"><i class="fas fa-database"></i> SQL</div>
+                    <div class="skill-pill"><i class="fab fa-docker"></i> Docker</div>
+                </div>
+
+                <h3 style="text-align:center; color:var(--wood-dark); margin-bottom:20px;">Chakra Nature (Skills)</h3>
+                <div class="skill-radar-box">
+                    <canvas id="skillRadar"></canvas>
+                </div>
+
+                <div class="section-title">Featured Projects</div>
+                <div class="project-grid">
+                    <div class="project-card">
+                        <div class="p-body">
+                            <div class="p-title">AI Remedy Agent</div>
+                            <div class="p-desc">Intelligent health assistant using n8n workflows and Ollama (Local LLM). Suggests remedies based on symptoms.</div>
+                            <div class="p-tags"><span>Python</span><span>n8n</span><span>Ollama</span><span>AI</span></div>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <div class="p-body">
+                            <div class="p-title">Shinobi Learning System</div>
+                            <div class="p-desc">Gamified LMS tracking DSA/Java progress with RPG elements, real-time analytics, and heatmap visualization.</div>
+                            <div class="p-tags"><span>JavaScript</span><span>Chart.js</span><span>Gamification</span></div>
+                        </div>
+                    </div>
+                    <div class="project-card">
+                        <div class="p-body">
+                            <div class="p-title">Predictive Data Analysis</div>
+                            <div class="p-desc">Automated Python pipeline for EDA and predictive modeling using Pandas and Scikit-Learn.</div>
+                            <div class="p-tags"><span>Python</span><span>Pandas</span><span>ML</span></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const ranks = [
+            { name: "E-Rank", min: 0, color: "#ff5e00" },
+            { name: "D-Rank", min: 1000, color: "#f1c40f" },
+            { name: "C-Rank", min: 4000, color: "#3498db" },
+            { name: "B-Rank", min: 8000, color: "#9b59b6" },
+            { name: "A-Rank", min: 15000, color: "#2ecc71" },
+            { name: "S-Rank", min: 20000, color: "#e74c3c" }
+        ];
+
+        const XP_VALUES = { 'DSA': 30, 'JAVA': 60, 'SPRING': 100, 'PYTHON': 40 };
+
+        let state = { xp: 0, streak: 0, lastLogin: new Date().toDateString(), tasks: [{type:'JAVA', title:'Setup System', xp:50}], history: [] };
+
+        // --- INIT ---
+        function init() {
+            const s = localStorage.getItem('shinobiV27_Final');
+            if(s) {
+                state = JSON.parse(s);
+                const t = new Date().toDateString();
+                if(state.lastLogin !== t) {
+                    const y = new Date(); y.setDate(y.getDate()-1);
+                    if(state.lastLogin === y.toDateString()) state.streak++; else state.streak = 0;
+                    state.lastLogin = t; save();
+                }
+            }
+            
+            // Load Theme
+            const savedTheme = localStorage.getItem('shinobiTheme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+            
+            render();
+        }
+
+        function save() { localStorage.setItem('shinobiV27_Final', JSON.stringify(state)); render(); }
+
+        // --- THEME TOGGLE ---
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('shinobiTheme', next);
+            updateThemeIcon(next);
+            
+            // Re-render charts to update colors
+            if(document.getElementById('xpChart')) renderArchives();
+            if(document.getElementById('skillRadar')) renderRadar();
+        }
+
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            if(theme === 'dark') {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            } else {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        }
+
+        function switchTab(t, b) {
+            document.getElementById('tab-missions').classList.add('hidden');
+            document.getElementById('tab-archives').classList.add('hidden');
+            document.getElementById('tab-portfolio').classList.add('hidden');
+            
+            document.getElementById('tab-'+t).classList.remove('hidden');
+            document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+            b.classList.add('active');
+            if(t==='archives') renderArchives();
+            if(t==='portfolio') renderRadar();
+        }
+
+        // --- UTILS ---
+        function showToast(msg, type='info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class="fas fa-${type==='success'?'check-circle':'info-circle'}"></i> ${msg}`;
+            document.getElementById('toast-container').appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showFloatingXP(btn, xp) {
+            const rect = btn.getBoundingClientRect();
+            const el = document.createElement('div');
+            el.className = 'floating-xp';
+            el.innerText = `+${xp} XP`;
+            el.style.left = `${rect.left}px`;
+            el.style.top = `${rect.top}px`;
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 1000);
+        }
+
+        function render() {
+            let r = ranks[0]; for(let i of ranks) if(state.xp >= i.min) r = i;
+            let next = ranks[ranks.indexOf(r)+1] || {min: state.xp * 1.5};
+
+            // TEXT AVATAR UPDATE
+            const av = document.getElementById('avatar-text');
+            av.innerText = r.name.charAt(0);
+            av.style.color = r.color;
+            av.style.borderColor = r.color;
+
+            document.getElementById('rank-name').innerText = r.name;
+            document.getElementById('streak').innerText = state.streak;
+            document.getElementById('total-done').innerText = state.history.length;
+            document.getElementById('curr-xp').innerText = state.xp;
+            document.getElementById('max-xp').innerText = next.min;
+
+            let pct = Math.min(100, ((state.xp - r.min) / (next.min - r.min)) * 100);
+            document.getElementById('xp-fill').style.width = pct + '%';
+
+            // Check Badges
+            if(state.streak >= 7) document.getElementById('badge-streak').classList.add('unlocked');
+            if(state.history.filter(h=>h.type==='DSA').length >= 10) document.getElementById('badge-dsa').classList.add('unlocked');
+            if(state.history.filter(h=>h.type==='JAVA').length >= 10) document.getElementById('badge-java').classList.add('unlocked');
+            if(r.min >= 5000) document.getElementById('badge-hokage').classList.add('unlocked');
+
+            const l = document.getElementById('quest-list'); l.innerHTML = '';
+            
+            if (state.tasks.length === 0) {
+                l.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-mug-hot" style="font-size:3rem; margin-bottom:10px; display:block;"></i>
+                    All missions cleared. Time for Ramen! 🍜
+                </div>`;
+            }
+
+            state.tasks.forEach((t, i) => {
+                let delay = i * 0.05; 
+                l.innerHTML += `
+                <div class="task" style="animation-delay: ${delay}s">
+                    <div style="display:flex; align-items:center;">
+                        <span class="pill ${t.type}">${t.type}</span>
+                        <span style="font-weight:800; color:var(--text-dark);">${t.title}</span>
+                    </div>
+                    <div style="display:flex; align-items:center; gap:10px;">
+                        <span style="font-size:0.8rem; color:var(--text-light); font-weight:bold;">+${t.xp} XP</span>
+                        <button onclick="done(${i}, this)" class="check-btn" title="Complete">✓</button>
+                        <button onclick="del(${i})" style="border:none; background:none; color:var(--text-light); font-size:1.2rem; cursor:pointer;">&times;</button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function addTask() {
+            const t = document.getElementById('new-title').value; 
+            const type = document.getElementById('new-type').value;
+            if(!t) return;
+            state.tasks.push({ type: type, title: t, xp: XP_VALUES[type] });
+            document.getElementById('new-title').value = ''; 
+            save();
+            showToast("Mission Added Successfully", "success");
+        }
+
+        function done(i, btn) {
+            const task = state.tasks[i];
+            showFloatingXP(btn, task.xp);
+            setTimeout(() => {
+                state.xp += task.xp;
+                state.history.push({ date: new Date().toISOString().split('T')[0], ...task });
+                state.tasks.splice(i, 1); 
+                save();
+                showToast(`Mission Complete! +${task.xp} XP`, "success");
+            }, 400);
+        }
+        function del(i) { state.tasks.splice(i, 1); save(); }
+
+        // --- BACKUP SYSTEM ---
+        function downloadBackup() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+            const anchor = document.createElement('a');
+            anchor.setAttribute("href", dataStr);
+            anchor.setAttribute("download", "shinobi_backup.json");
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+            showToast("Scroll Saved Successfully", "success");
+        }
+
+        function uploadBackup(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const content = JSON.parse(e.target.result);
+                    if(confirm("Load this scroll? Current progress will be overwritten!")) {
+                        state = content;
+                        save();
+                        showToast("System Restored!", "success");
+                        location.reload();
+                    }
+                } catch (err) {
+                    alert("Invalid Scroll File!");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function copyData() {
+             const data = btoa(JSON.stringify(state));
+             navigator.clipboard.writeText(data).then(() => showToast("Save Code Copied!", "success"));
+        }
+
+        function pasteData() {
+            const code = prompt("Paste your Save Code here:");
+            if(code) {
+                try {
+                    state = JSON.parse(atob(code));
+                    save();
+                    showToast("System Restored!", "success");
+                    location.reload();
+                } catch(e) { alert("Invalid Code!"); }
+            }
+        }
+
+        // --- CHARTS ---
+        function renderArchives() {
+            const activity = {}; state.history.forEach(h => activity[h.date] = (activity[h.date] || 0) + 1);
+            
+            const grid = document.getElementById('github-grid'); grid.innerHTML = '';
+            const d = new Date(); d.setDate(d.getDate() - 365);
+            for(let i=0; i<365; i++) {
+                d.setDate(d.getDate() + 1); const k = d.toISOString().split('T')[0]; const count = activity[k] || 0;
+                const cell = document.createElement('div'); cell.className = 'day-cell';
+                if(count > 0) cell.classList.add('l1'); if(count > 2) cell.classList.add('l2');
+                if(count > 4) cell.classList.add('l3'); if(count > 6) cell.classList.add('l4');
+                cell.title = `${k}: ${count} missions`; grid.appendChild(cell);
+            }
+
+            const chartData = {};
+            for(let i=13; i>=0; i--) {
+                const dt = new Date(); dt.setDate(dt.getDate()-i);
+                chartData[dt.toISOString().split('T')[0]] = 0;
+            }
+            state.history.forEach(h => { if(chartData[h.date] !== undefined) chartData[h.date]++; });
+
+            const ctx = document.getElementById('xpChart').getContext('2d');
+            if(window.myC) window.myC.destroy();
+            
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : '#e0e0e0';
+            
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(0, 179, 65, 0.4)'); gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+            window.myC = new Chart(ctx, {
+                type: 'line',
+                data: { 
+                    labels: Object.keys(chartData).map(d => d.slice(5)),
+                    datasets: [{ label: 'Missions', data: Object.values(chartData), borderColor: '#00b341', backgroundColor: gradient, fill: true, tension: 0.4, pointBackgroundColor: '#fff', pointBorderColor: '#ff5e00', pointRadius: 5 }] 
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: gridColor, borderDash: [5,5] } }, 
+                        x: { grid: { display: false } } 
+                    } 
+                }
+            });
+
+            const log = document.getElementById('mission-log'); log.innerHTML = '';
+            const revHist = [...state.history].reverse();
+            if(revHist.length === 0) log.innerHTML = '<div style="text-align:center; color:var(--text-light);">No missions yet.</div>';
+            revHist.forEach(h => {
+                log.innerHTML += `
+                <div class="log-item">
+                    <div><span style="font-family:monospace; color:var(--text-light); margin-right:10px;">${h.date}</span> <strong style="color:var(--text-dark)">${h.title}</strong> <span style="font-size:0.7rem; background:var(--bg-input); padding:2px 5px; border-radius:4px; color:var(--text-light);">${h.type}</span></div>
+                    <div style="color:var(--leaf-green); font-weight:900;">+${h.xp} XP</div>
+                </div>`;
+            });
+        }
+
+        function renderRadar() {
+            let r = ranks[0]; for(let i of ranks) if(state.xp >= i.min) r = i;
+            document.getElementById('pf-rank').innerText = r.name.split(' ')[0]; 
+            document.getElementById('pf-xp').innerText = state.xp.toLocaleString();
+            document.getElementById('pf-streak').innerText = state.streak;
+
+            const counts = { DSA: 0, JAVA: 0, SPRING: 0, PYTHON: 0 };
+            state.history.forEach(h => { if(counts[h.type] !== undefined) counts[h.type]++; });
+
+            // Fix for invisible chart: ensure values are at least 1 for visual presence
+            const dataValues = [
+                Math.max(1, counts.DSA),
+                Math.max(1, counts.JAVA),
+                Math.max(1, counts.SPRING),
+                Math.max(1, counts.PYTHON)
+            ];
+
+            const ctx = document.getElementById('skillRadar').getContext('2d');
+            if(window.radarC) window.radarC.destroy();
+            
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const textColor = isDark ? '#ccc' : '#5c4033';
+            const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.2)'; // Darker grid for light mode
+
+            window.radarC = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['DSA', 'Java', 'Spring', 'Python'],
+                    datasets: [{
+                        label: 'Skill Mastery',
+                        data: dataValues,
+                        backgroundColor: 'rgba(255, 94, 0, 0.3)',
+                        borderColor: '#ff5e00',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#ff5e00'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { color: gridColor },
+                            grid: { color: gridColor },
+                            pointLabels: { font: { size: 12, weight: '800', family: 'Nunito' }, color: textColor },
+                            ticks: { display: false },
+                            suggestedMin: 0, suggestedMax: 10 
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>
